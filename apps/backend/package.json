@@ -1,0 +1,38 @@
+{
+  "name": "@todomanager/backend",
+  "version": "1.0.0",
+  "description": "Backend API for TodoManager",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "db:prepare": "npx prisma generate && npx prisma migrate deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "env-var": "^7.5.0",
+    "express": "^4.21.1",
+    "express-validator": "^7.3.0",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.2",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yaml": "^1.9.6",
+    "nodemon": "^3.1.10",
+    "prisma": "^5.19.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,396 @@
+openapi: 3.0.3
+info:
+  title: Todo Manager API
+  description: |
+    API responsible for managing production Demand planning for **Latinhas LLC**.
+
+    Each Demand has a planning window (start and end dates), a status, and a list of items.
+    Every item is associated with a SKU and stores the planned total in metric tons.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+tags:
+  - name: Demands
+    description: Demand planning management operations
+paths:
+  /demands:
+    get:
+      tags:
+        - Demands
+      summary: List all demands
+      description: Retrieves paginated demands, with optional filtering by status and planning period.
+      parameters:
+        - in: query
+          name: status
+          description: Filters demands by the current status.
+          schema:
+            $ref: "#/components/schemas/DemandStatus"
+        - in: query
+          name: startsAfter
+          description: Returns only demands whose start date is greater than or equal to the provided date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endsBefore
+          description: Returns only demands whose end date is less than or equal to the provided date.
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: page
+          description: Page number to retrieve. Defaults to the first page when omitted.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: pageSize
+          description: Amount of records per page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: List of demands retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Demand"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags:
+        - Demands
+      summary: Create a new demand
+      description: Registers a new production demand along with its planned items.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DemandCreatePayload"
+      responses:
+        "201":
+          description: Demand created successfully.
+          headers:
+            Location:
+              description: URL of the created resource.
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Demand"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          description: A demand already exists with conflicting identifiers (for example, duplicated title).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /demands/{demandId}:
+    parameters:
+      - $ref: "#/components/parameters/DemandId"
+    get:
+      tags:
+        - Demands
+      summary: Get a demand by ID
+      description: Returns the full details of a specific demand.
+      responses:
+        "200":
+          description: Demand retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Demand"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Demands
+      summary: Update an existing demand
+      description: Updates an existing demand with the provided data. Items are not modified in this operation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DemandUpdatePayload"
+      responses:
+        "200":
+          description: Demand updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Demand"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags:
+        - Demands
+      summary: Delete a demand
+      description: Deletes a demand identified by the provided ID.
+      responses:
+        "204":
+          description: Demand deleted successfully.
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+components:
+  parameters:
+    DemandId:
+      name: demandId
+      in: path
+      required: true
+      description: Unique identifier of the demand.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    DemandStatus:
+      type: string
+      description: Current status of the demand lifecycle.
+      enum:
+        - planning
+        - in_progress
+        - completed
+    DemandItemInput:
+      type: object
+      required:
+        - description
+        - plannedTotalTons
+      properties:
+        description:
+          type: string
+          minLength: 1
+          description: Short description of the planned item. Cannot be empty.
+        plannedTotalTons:
+          type: number
+          format: float
+          minimum: 0
+          description: Planned production total for the item, measured in metric tons.
+    DemandItem:
+      allOf:
+        - type: object
+          properties:
+            sku:
+              type: string
+              description: Unique SKU identifier generated by the persistence layer.
+        - $ref: "#/components/schemas/DemandItemInput"
+        - type: object
+          properties:
+            producedTotalTons:
+              type: number
+              format: float
+              minimum: 0
+              description: Actual produced total for the item, when available.
+    DemandSummary:
+      type: object
+      required:
+        - id
+        - title
+        - status
+        - startDate
+        - endDate
+        - prodTotalTons
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the demand.
+        title:
+          type: string
+          description: Short name used to reference the demand.
+          example: Q1/2025 Demand
+        status:
+          $ref: "#/components/schemas/DemandStatus"
+        startDate:
+          type: string
+          format: date
+          description: Planned start date using the ISO 8601 format (YYYY-MM-DD).
+        endDate:
+          type: string
+          format: date
+          description: Planned end date using the ISO 8601 format (YYYY-MM-DD).
+        prodTotalTons:
+          type: integer
+          minimum: 0
+          description: Total amount already produced for the demand, measured in metric tons.
+    Demand:
+      allOf:
+        - $ref: "#/components/schemas/DemandSummary"
+        - type: object
+          required:
+            - items
+          properties:
+            description:
+              type: string
+              description: Detailed description of the demand.
+            items:
+              type: array
+              description: |
+                Planned items for this demand. Each item includes its SKU and the planned total in metric tons.
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/DemandItem"
+            createdAt:
+              type: string
+              format: date-time
+              description: Timestamp indicating when the demand was created.
+            updatedAt:
+              type: string
+              format: date-time
+              description: Timestamp indicating the last update.
+    DemandCreatePayload:
+      type: object
+      required:
+        - title
+        - description
+        - status
+        - startDate
+        - endDate
+        - items
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 140
+          description: Human-friendly title used to identify the demand.
+        description:
+          type: string
+          minLength: 1
+          description: Additional notes or business context for the demand. Cannot be empty.
+        status:
+          $ref: "#/components/schemas/DemandStatus"
+        startDate:
+          type: string
+          format: date
+          description: Planned start date using the ISO 8601 format (YYYY-MM-DD).
+        endDate:
+          type: string
+          format: date
+          description: Planned end date using the ISO 8601 format (YYYY-MM-DD). Must be greater than or equal to the start date.
+        items:
+          type: array
+          minItems: 1
+          description: List of items planned for the demand.
+          items:
+            $ref: "#/components/schemas/DemandItemInput"
+    DemandUpdatePayload:
+      type: object
+      required:
+        - title
+        - description
+        - status
+        - endDate
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 140
+          description: Human-friendly title used to identify the demand.
+        description:
+          type: string
+          minLength: 1
+          description: Additional notes or business context for the demand. Cannot be empty.
+        status:
+          $ref: "#/components/schemas/DemandStatus"
+        endDate:
+          type: string
+          format: date
+          description: Planned end date using the ISO 8601 format (YYYY-MM-DD). Must be greater than or equal to the start date.
+    PaginationMeta:
+      type: object
+      required:
+        - page
+        - pageSize
+        - totalItems
+        - totalPages
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          description: Current page index (1-based).
+        pageSize:
+          type: integer
+          minimum: 1
+          description: Amount of records returned per page.
+        totalItems:
+          type: integer
+          minimum: 0
+          description: Total number of items available for the current query.
+        totalPages:
+          type: integer
+          minimum: 0
+          description: Total number of pages available for the current query.
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        code:
+          type: string
+          description: Internal error code used to support troubleshooting.
+          example: demand_not_found
+        message:
+          type: string
+          description: Short human-readable description of the error.
+        details:
+          type: object
+          additionalProperties: true
+          description: Optional metadata that helps diagnose the issue.
+    ValidationErrorResponse:
+      allOf:
+        - $ref: "#/components/schemas/ErrorResponse"
+        - type: object
+          properties:
+            details:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              description: Map of validation issues grouped by field.
+  responses:
+    NotFound:
+      description: Resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ValidationError:
+      description: Invalid input supplied for the requested operation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrorResponse"
+    InternalError:
+      description: Unexpected error while processing the request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"

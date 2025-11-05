@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: dockerfile
+    container_name: todomanager-backend
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_URL=file:/app/prisma/db/todomanager.db
+    restart: unless-stopped
+    networks:
+      - todomanager-network
+
+networks:
+  todomanager-network:
+    driver: bridge

@@ -1,0 +1,30 @@
+{
+  "name": "todomanager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "packageManager": "npm@10.2.4",
+  "workspaces": [
+    "apps/*",
+    "apps/common/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "start": "turbo start",
+    "start:dev": "turbo start:dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JPMworkPROG/TodoManager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JPMworkPROG/TodoManager/issues"
+  },
+  "homepage": "https://github.com/JPMworkPROG/TodoManager#readme",
+  "dependencies": {
+    "turbo": "^2.6.0"
+  }
+}

@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Demand {
+  id            String       @id @default(uuid())
+  title         String
+  description   String
+  status        String       @default("planning")
+  startDate     DateTime
+  endDate       DateTime
+  prodTotalTons Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  items         DemandItem[]
+
+  @@index([status])
+  @@index([startDate])
+  @@index([endDate])
+}
+
+model DemandItem {
+  id                String  @id @default(uuid())
+  sku               String  @unique @default(uuid())
+  description       String
+  plannedTotalTons  Float
+  producedTotalTons Float?  @default(0)
+  demandId          String
+  demand            Demand  @relation(fields: [demandId], references: [id], onDelete: Cascade)
+
+  @@index([demandId])
+}
