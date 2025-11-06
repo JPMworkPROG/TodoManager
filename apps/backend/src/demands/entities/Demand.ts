@@ -1,5 +1,5 @@
-import { DemandItem } from './DemandItem';
-import { DemandStatus } from './DemandStatus';
+import { DemandItem } from "./DemandItem";
+import { DemandStatus } from "./DemandStatus";
 
 export class Demand {
   constructor(
@@ -11,7 +11,7 @@ export class Demand {
     public readonly endDate: Date,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
-    public readonly items: DemandItem[],
+    public readonly items: DemandItem[]
   ) {}
 
   static fromPrisma(data: {
@@ -40,8 +40,7 @@ export class Demand {
       data.endDate,
       data.createdAt,
       data.updatedAt,
-      data.items.map(DemandItem.fromPrisma),
+      data.items.map(DemandItem.fromPrisma)
     );
   }
 }
-

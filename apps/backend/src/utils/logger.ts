@@ -1,115 +1,119 @@
-import pino from 'pino';
-import pinoPretty from 'pino-pretty';
-import type { Transform } from 'stream';
-import { env } from 'process';
+import pino from "pino";
+import pinoPretty from "pino-pretty";
+import type { Transform } from "stream";
+import { env } from "process";
 
-export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
+export type LogLevel = "fatal" | "error" | "warn" | "info" | "debug" | "trace";
 
 export interface LoggerConfig {
-   level?: LogLevel;
-   service?: string;
-   environment?: string;
-   pretty?: boolean;
+  level?: LogLevel;
+  service?: string;
+  environment?: string;
+  pretty?: boolean;
 }
 
 export interface LoggerContext {
-   service?: string;
-   requestId?: string;
-   userId?: string;
-   traceId?: string;
+  service?: string;
+  requestId?: string;
+  userId?: string;
+  traceId?: string;
 }
 
 let prettyStream: Transform | null = null;
 
 export class Logger {
-   private pinoInstance: pino.Logger;
-   private serviceName: string;
+  private pinoInstance: pino.Logger;
+  private serviceName: string;
 
-   constructor(config: LoggerConfig = {}) {
-      const {
-         level = 'info',
-         service = 'unknown-service',
-         environment = env.NODE_ENV || 'development',
-         pretty = true
-      } = config;
+  constructor(config: LoggerConfig = {}) {
+    const {
+      level = "info",
+      service = "unknown-service",
+      environment = env.NODE_ENV || "development",
+      pretty = true,
+    } = config;
 
-      this.serviceName = service;
+    this.serviceName = service;
 
-      const pinoConfig: pino.LoggerOptions = {
-         level,
-         base: {
-            service,
-            environment,
-            pid: process.pid,
-         },
-         timestamp: pino.stdTimeFunctions.isoTime,
-      };
+    const pinoConfig: pino.LoggerOptions = {
+      level,
+      base: {
+        service,
+        environment,
+        pid: process.pid,
+      },
+      timestamp: pino.stdTimeFunctions.isoTime,
+    };
 
-      if (pretty) {
-         if (!prettyStream) {
-            prettyStream = pinoPretty({
-               colorize: true,
-               translateTime: 'SYS:standard',
-               ignore: 'pid,hostname',
-               messageFormat: '[{service}] {msg}',
-            });
-         }
-
-         this.pinoInstance = pino(pinoConfig, prettyStream);
-      } else {
-         this.pinoInstance = pino(pinoConfig);
+    if (pretty) {
+      if (!prettyStream) {
+        prettyStream = pinoPretty({
+          colorize: true,
+          translateTime: "SYS:standard",
+          ignore: "pid,hostname",
+          messageFormat: "[{service}] {msg}",
+        });
       }
-   }
 
-   private enrichLog(level: LogLevel, message: string, context?: LoggerContext & Record<string, unknown>) {
-      const logData = {
-         ...context,
-         msg: message,
-      };
+      this.pinoInstance = pino(pinoConfig, prettyStream);
+    } else {
+      this.pinoInstance = pino(pinoConfig);
+    }
+  }
 
-      this.pinoInstance[level](logData);
-   }
+  private enrichLog(
+    level: LogLevel,
+    message: string,
+    context?: LoggerContext & Record<string, unknown>
+  ) {
+    const logData = {
+      ...context,
+      msg: message,
+    };
 
-   fatal(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('fatal', message, context);
-   }
+    this.pinoInstance[level](logData);
+  }
 
-   error(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('error', message, context);
-   }
+  fatal(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("fatal", message, context);
+  }
 
-   warn(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('warn', message, context);
-   }
+  error(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("error", message, context);
+  }
 
-   info(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('info', message, context);
-   }
+  warn(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("warn", message, context);
+  }
 
-   debug(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('debug', message, context);
-   }
+  info(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("info", message, context);
+  }
 
-   trace(message: string, context?: LoggerContext & Record<string, unknown>) {
-      this.enrichLog('trace', message, context);
-   }
+  debug(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("debug", message, context);
+  }
 
-   child(context: LoggerContext): Logger {
-      const childLogger = new Logger();
-      childLogger.pinoInstance = this.pinoInstance.child(context);
-      childLogger.serviceName = this.serviceName;
-      return childLogger;
-   }
+  trace(message: string, context?: LoggerContext & Record<string, unknown>) {
+    this.enrichLog("trace", message, context);
+  }
+
+  child(context: LoggerContext): Logger {
+    const childLogger = new Logger();
+    childLogger.pinoInstance = this.pinoInstance.child(context);
+    childLogger.serviceName = this.serviceName;
+    return childLogger;
+  }
 }
 
 export function createLogger(config?: LoggerConfig): Logger {
-   return new Logger(config);
+  return new Logger(config);
 }
 
 export const logger = createLogger({
-   level: (env.LOG_LEVEL as LogLevel) || 'info',
-   service: env.SERVICE_NAME || 'core-tasks',
-   environment: env.NODE_ENV || 'development',
+  level: (env.LOG_LEVEL as LogLevel) || "info",
+  service: env.SERVICE_NAME || "core-tasks",
+  environment: env.NODE_ENV || "development",
 });
 
 // Export default

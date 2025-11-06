@@ -1,4 +1,4 @@
-import { DemandStatus } from '../entities/DemandStatus';
+import { DemandStatus } from "../entities/DemandStatus";
 
 export interface ListDemandsQueryDTO {
   status?: DemandStatus;

@@ -1,7 +1,12 @@
-import prisma from '../../database/prisma';
-import { Demand } from '../entities/Demand';
-import { DemandItem } from '../entities/DemandItem';
-import { IDemandRepository, FindAllFilters, PaginationOptions, PaginatedResult } from './IDemandRepository';
+import prisma from "../../database/prisma";
+import { Demand } from "../entities/Demand";
+import { DemandItem } from "../entities/DemandItem";
+import {
+  IDemandRepository,
+  FindAllFilters,
+  PaginationOptions,
+  PaginatedResult,
+} from "./IDemandRepository";
 
 export class DemandRepository implements IDemandRepository {
   async create(data: {
@@ -39,7 +44,9 @@ export class DemandRepository implements IDemandRepository {
 
   async findByTitle(title: string): Promise<Demand | null> {
     const demand = await prisma.demand.findFirst({
-      where: { title },
+      where: {
+        title,
+      },
       include: {
         items: true,
       },
@@ -50,7 +57,9 @@ export class DemandRepository implements IDemandRepository {
 
   async findById(id: string): Promise<Demand | null> {
     const demand = await prisma.demand.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
       include: {
         items: true,
       },
@@ -59,7 +68,10 @@ export class DemandRepository implements IDemandRepository {
     return demand ? Demand.fromPrisma(demand) : null;
   }
 
-  async findAll(filters: FindAllFilters, pagination: PaginationOptions): Promise<PaginatedResult<Demand>> {
+  async findAll(
+    filters: FindAllFilters,
+    pagination: PaginationOptions
+  ): Promise<PaginatedResult<Demand>> {
     const where: Record<string, unknown> = {};
 
     if (filters.status) {
@@ -89,10 +101,12 @@ export class DemandRepository implements IDemandRepository {
         skip,
         take: pagination.pageSize,
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       }),
-      prisma.demand.count({ where }),
+      prisma.demand.count({
+        where,
+      }),
     ]);
 
     const totalPages = Math.ceil(totalItems / pagination.pageSize);
@@ -106,18 +120,25 @@ export class DemandRepository implements IDemandRepository {
     };
   }
 
-  async update(id: string, data: {
-    title: string;
-    description: string;
-    status: string;
-    endDate: Date;
-  }): Promise<Demand> {
+  async update(
+    id: string,
+    data: {
+      title: string;
+      description: string;
+      status: string;
+      startDate: Date;
+      endDate: Date;
+    }
+  ): Promise<Demand> {
     const demand = await prisma.demand.update({
-      where: { id },
+      where: {
+        id,
+      },
       data: {
         title: data.title,
         description: data.description,
         status: data.status,
+        startDate: data.startDate,
         endDate: data.endDate,
       },
       include: {
@@ -130,15 +151,20 @@ export class DemandRepository implements IDemandRepository {
 
   async delete(id: string): Promise<void> {
     await prisma.demand.delete({
-      where: { id },
+      where: {
+        id,
+      },
     });
   }
 
-  async createItem(demandId: string, data: {
-    description: string;
-    plannedTotalTons: number;
-    producedTotalTons?: number;
-  }): Promise<DemandItem> {
+  async createItem(
+    demandId: string,
+    data: {
+      description: string;
+      plannedTotalTons: number;
+      producedTotalTons?: number;
+    }
+  ): Promise<DemandItem> {
     const item = await prisma.demandItem.create({
       data: {
         demandId,
@@ -153,17 +179,22 @@ export class DemandRepository implements IDemandRepository {
 
   async findItemBySku(sku: number): Promise<DemandItem | null> {
     const item = await prisma.demandItem.findUnique({
-      where: { sku },
+      where: {
+        sku,
+      },
     });
 
     return item ? DemandItem.fromPrisma(item) : null;
   }
 
-  async updateItem(sku: number, data: {
-    description?: string;
-    plannedTotalTons?: number;
-    producedTotalTons?: number;
-  }): Promise<DemandItem> {
+  async updateItem(
+    sku: number,
+    data: {
+      description?: string;
+      plannedTotalTons?: number;
+      producedTotalTons?: number;
+    }
+  ): Promise<DemandItem> {
     const updateData: {
       description?: string;
       plannedTotalTons?: number;
@@ -181,11 +212,20 @@ export class DemandRepository implements IDemandRepository {
     }
 
     const item = await prisma.demandItem.update({
-      where: { sku },
+      where: {
+        sku,
+      },
       data: updateData,
     });
 
     return DemandItem.fromPrisma(item);
   }
-}
 
+  async deleteItem(sku: number): Promise<void> {
+    await prisma.demandItem.delete({
+      where: {
+        sku,
+      },
+    });
+  }
+}

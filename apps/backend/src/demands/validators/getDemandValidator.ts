@@ -1,7 +1,5 @@
-import { param } from 'express-validator';
+import { param } from "express-validator";
 
 export const getDemandValidator = [
-   param('demandId')
-      .isUUID()
-      .withMessage('Demand ID must be a valid UUID'),
+  param("demandId").isUUID().withMessage("Demand ID must be a valid UUID"),
 ];

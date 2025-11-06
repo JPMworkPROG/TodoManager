@@ -1,16 +1,19 @@
-import { IDemandRepository } from '../repositories/IDemandRepository';
-import { ListDemandsQueryDTO } from '../dtos/ListDemandsQueryDTO';
-import { Demand } from '../entities/Demand';
-import { PaginatedResult } from '../repositories/IDemandRepository';
-import logger from '../../utils/logger';
+import { IDemandRepository } from "../repositories/IDemandRepository";
+import { ListDemandsQueryDTO } from "../dtos/ListDemandsQueryDTO";
+import { Demand } from "../entities/Demand";
+import { PaginatedResult } from "../repositories/IDemandRepository";
+import logger from "../../utils/logger";
 
 export class ListDemandsUseCase {
-  constructor(private readonly demandRepository: IDemandRepository) { }
+  constructor(private readonly demandRepository: IDemandRepository) {}
 
-  async execute(query: ListDemandsQueryDTO, requestId?: string): Promise<PaginatedResult<Demand>> {
-    logger.info('Listing demands', {
+  async execute(
+    query: ListDemandsQueryDTO,
+    requestId?: string
+  ): Promise<PaginatedResult<Demand>> {
+    logger.info("Listing demands", {
       requestId,
-      action: 'LIST_DEMANDS',
+      action: "LIST_DEMANDS",
       filters: {
         status: query.status,
         startsAfter: query.startsAfter,
@@ -31,11 +34,14 @@ export class ListDemandsUseCase {
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 20;
 
-    const result = await this.demandRepository.findAll(filters, { page, pageSize });
+    const result = await this.demandRepository.findAll(filters, {
+      page,
+      pageSize,
+    });
 
-    logger.info('Demands listed successfully', {
+    logger.info("Demands listed successfully", {
       requestId,
-      action: 'LIST_DEMANDS',
+      action: "LIST_DEMANDS",
       totalItems: result.totalItems,
       totalPages: result.totalPages,
       page: result.page,
@@ -45,4 +51,3 @@ export class ListDemandsUseCase {
     return result;
   }
 }
-

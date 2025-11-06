@@ -412,6 +412,7 @@ components:
         - title
         - description
         - status
+        - startDate
         - endDate
       properties:
         title:
@@ -425,6 +426,10 @@ components:
           description: Additional notes or business context for the demand. Cannot be empty.
         status:
           $ref: "#/components/schemas/DemandStatus"
+        startDate:
+          type: string
+          format: date
+          description: Planned start date using the ISO 8601 format (YYYY-MM-DD).
         endDate:
           type: string
           format: date

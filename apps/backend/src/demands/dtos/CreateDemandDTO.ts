@@ -1,15 +1,15 @@
-import { DemandStatus } from '../entities/DemandStatus';
+import { DemandStatus } from "../entities/DemandStatus";
 
 export interface DemandItemInputDTO {
-   description: string;
-   plannedTotalTons: number;
+  description: string;
+  plannedTotalTons: number;
 }
 
 export interface CreateDemandDTO {
-   title: string;
-   description: string;
-   status: DemandStatus;
-   startDate: string;
-   endDate: string;
-   items: DemandItemInputDTO[];
+  title: string;
+  description: string;
+  status: DemandStatus;
+  startDate: string;
+  endDate: string;
+  items: DemandItemInputDTO[];
 }
