@@ -34,7 +34,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select"
-import { ChevronLeft, ChevronRight, PenSquare, Plus, Trash2, Edit2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Eye, Plus, Trash2, Edit2 } from "lucide-react"
 import { useDemands, useCreateDemand, useDemand, useUpdateDemand, type DemandStatus, type CreateDemandPayload, type UpdateDemandPayload } from "../hooks/useDemands"
 
 const statusStyles: Record<DemandStatus, string> = {
@@ -270,7 +270,7 @@ export default function DemandPage() {
                      <TableHeader className="bg-table-header-bg dark:bg-table-header-bg uppercase tracking-wide text-table-header-text transition-colors duration-300">
                         <TableRow className="hover:bg-table-header-bg">
                            <TableHead className="w-24 px-6 py-3 text-xs font-semibold text-table-header-text">
-                              Editar
+                              Visualizar
                            </TableHead>
                            <TableHead className="px-6 py-3 text-xs font-semibold text-table-header-text">
                               Período
@@ -300,10 +300,10 @@ export default function DemandPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-9 w-9 text-primary hover:bg-primary/10 transition-colors duration-200"
-                                    aria-label={`Editar demanda ${demand.title}`}
+                                    aria-label={`Visualizar demanda ${demand.title}`}
                                     onClick={() => handleEditClick(demand.id)}
                                  >
-                                    <PenSquare className="h-4 w-4" />
+                                    <Eye className="h-4 w-4" />
                                  </Button>
                               </TableCell>
                               <TableCell className="px-6 py-4 text-base text-table-text">
