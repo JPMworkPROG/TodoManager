@@ -9,7 +9,6 @@ export class Demand {
     public readonly status: DemandStatus,
     public readonly startDate: Date,
     public readonly endDate: Date,
-    public readonly prodTotalTons: number,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public readonly items: DemandItem[],
@@ -22,12 +21,10 @@ export class Demand {
     status: string;
     startDate: Date;
     endDate: Date;
-    prodTotalTons: number;
     createdAt: Date;
     updatedAt: Date;
     items: Array<{
-      id: string;
-      sku: string;
+      sku: number;
       description: string;
       plannedTotalTons: number;
       producedTotalTons: number | null;
@@ -41,7 +38,6 @@ export class Demand {
       data.status as DemandStatus,
       data.startDate,
       data.endDate,
-      data.prodTotalTons,
       data.createdAt,
       data.updatedAt,
       data.items.map(DemandItem.fromPrisma),

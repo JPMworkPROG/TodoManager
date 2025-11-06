@@ -1,8 +1,9 @@
 import { Demand } from '../entities/Demand';
+import { DemandItem } from '../entities/DemandItem';
 import { DemandStatus } from '../entities/DemandStatus';
 
 export interface DemandItemDTO {
-   sku: string;
+   sku: number;
    description: string;
    plannedTotalTons: number;
    producedTotalTons: number | null;
@@ -15,10 +16,18 @@ export interface DemandDTO {
    status: DemandStatus;
    startDate: string;
    endDate: string;
-   prodTotalTons: number;
    items: DemandItemDTO[];
    createdAt: string;
    updatedAt: string;
+}
+
+export function toDemandItemDTO(item: DemandItem): DemandItemDTO {
+   return {
+      sku: item.sku,
+      description: item.description,
+      plannedTotalTons: item.plannedTotalTons,
+      producedTotalTons: item.producedTotalTons,
+   };
 }
 
 export function toDemandDTO(demand: Demand): DemandDTO {
@@ -29,13 +38,7 @@ export function toDemandDTO(demand: Demand): DemandDTO {
       status: demand.status,
       startDate: demand.startDate.toISOString().split('T')[0],
       endDate: demand.endDate.toISOString().split('T')[0],
-      prodTotalTons: demand.prodTotalTons,
-      items: demand.items.map((item) => ({
-         sku: item.sku,
-         description: item.description,
-         plannedTotalTons: item.plannedTotalTons,
-         producedTotalTons: item.producedTotalTons,
-      })),
+      items: demand.items.map(toDemandItemDTO),
       createdAt: demand.createdAt.toISOString(),
       updatedAt: demand.updatedAt.toISOString(),
    };

@@ -1,10 +1,10 @@
 export type DemandStatus = "planning" | "in_progress" | "completed"
 
 export type DemandItem = {
-   sku: string
+   sku: number
    description: string
    plannedTotalTons: number
-   producedTotalTons: number
+   producedTotalTons: number | null
 }
 
 export type Demand = {
@@ -49,6 +49,18 @@ export type UpdateDemandPayload = {
    description: string
    status: DemandStatus
    endDate: string
+}
+
+export type DemandItemCreatePayload = {
+   description: string
+   plannedTotalTons: number
+   producedTotalTons?: number
+}
+
+export type DemandItemUpdatePayload = {
+   description?: string
+   plannedTotalTons?: number
+   producedTotalTons?: number
 }
 
 export const fetchDemands = async (page: number, pageSize: number): Promise<PaginatedDemandsResponse> => {
@@ -112,6 +124,42 @@ export const updateDemand = async (demandId: string, payload: UpdateDemandPayloa
    if (!response.ok) {
       const error = await response.json().catch(() => ({ message: response.statusText }));
       throw new Error(error.message || `Erro ao atualizar demanda: ${response.statusText}`);
+   }
+
+   const result = await response.json();
+   return result;
+}
+
+export const createDemandItem = async (demandId: string, payload: DemandItemCreatePayload): Promise<DemandItem> => {
+   const response = await fetch(`http://localhost:3000/api/demands/${demandId}/items`, {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+   });
+
+   if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(error.message || `Erro ao criar item: ${response.statusText}`);
+   }
+
+   const result = await response.json();
+   return result;
+}
+
+export const updateDemandItem = async (demandId: string, itemId: number, payload: DemandItemUpdatePayload): Promise<DemandItem> => {
+   const response = await fetch(`http://localhost:3000/api/demands/${demandId}/items/${itemId}`, {
+      method: 'PATCH',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+   });
+
+   if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(error.message || `Erro ao atualizar item: ${response.statusText}`);
    }
 
    const result = await response.json();

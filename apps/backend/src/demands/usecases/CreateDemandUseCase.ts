@@ -38,7 +38,6 @@ export class CreateDemandUseCase {
          status: dto.status,
          startDate,
          endDate,
-         prodTotalTons: 0,
          items: dto.items.map((item) => ({
             description: item.description.trim(),
             plannedTotalTons: item.plannedTotalTons,

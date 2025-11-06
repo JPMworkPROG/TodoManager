@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fetchDemands, createDemand, fetchDemand, updateDemand, type Demand, type PaginatedDemandsResponse, type CreateDemandPayload, type UpdateDemandPayload } from "../api/demands"
+import { fetchDemands, createDemand, fetchDemand, updateDemand, createDemandItem, updateDemandItem, type Demand, type PaginatedDemandsResponse, type CreateDemandPayload, type UpdateDemandPayload, type DemandItemCreatePayload, type DemandItemUpdatePayload } from "../api/demands"
 
-export type { Demand, DemandStatus, CreateDemandPayload, UpdateDemandPayload, DemandItemInput } from "../api/demands"
+export type { Demand, DemandStatus, CreateDemandPayload, UpdateDemandPayload, DemandItemInput, DemandItemCreatePayload, DemandItemUpdatePayload } from "../api/demands"
 
 export const useDemands = (page: number, pageSize: number) => {
    return useQuery<PaginatedDemandsResponse>({
@@ -39,6 +39,32 @@ export const useUpdateDemand = () => {
       onSuccess: () => {
          queryClient.invalidateQueries({ queryKey: ['demands'] })
          queryClient.invalidateQueries({ queryKey: ['demand'] })
+      },
+   })
+}
+
+export const useCreateDemandItem = () => {
+   const queryClient = useQueryClient()
+
+   return useMutation({
+      mutationFn: ({ demandId, payload }: { demandId: string; payload: DemandItemCreatePayload }) =>
+         createDemandItem(demandId, payload),
+      onSuccess: (_, variables) => {
+         queryClient.invalidateQueries({ queryKey: ['demands'] })
+         queryClient.invalidateQueries({ queryKey: ['demand', variables.demandId] })
+      },
+   })
+}
+
+export const useUpdateDemandItem = () => {
+   const queryClient = useQueryClient()
+
+   return useMutation({
+      mutationFn: ({ demandId, itemId, payload }: { demandId: string; itemId: number; payload: DemandItemUpdatePayload }) =>
+         updateDemandItem(demandId, itemId, payload),
+      onSuccess: (_, variables) => {
+         queryClient.invalidateQueries({ queryKey: ['demands'] })
+         queryClient.invalidateQueries({ queryKey: ['demand', variables.demandId] })
       },
    })
 }

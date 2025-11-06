@@ -1,4 +1,5 @@
 import { Demand } from '../entities/Demand';
+import { DemandItem } from '../entities/DemandItem';
 
 export interface FindAllFilters {
   status?: string;
@@ -26,7 +27,6 @@ export interface IDemandRepository {
     status: string;
     startDate: Date;
     endDate: Date;
-    prodTotalTons: number;
     items: Array<{
       description: string;
       plannedTotalTons: number;
@@ -42,5 +42,16 @@ export interface IDemandRepository {
     endDate: Date;
   }): Promise<Demand>;
   delete(id: string): Promise<void>;
+  createItem(demandId: string, data: {
+    description: string;
+    plannedTotalTons: number;
+    producedTotalTons?: number;
+  }): Promise<DemandItem>;
+  findItemBySku(sku: number): Promise<DemandItem | null>;
+  updateItem(sku: number, data: {
+    description?: string;
+    plannedTotalTons?: number;
+    producedTotalTons?: number;
+  }): Promise<DemandItem>;
 }
 

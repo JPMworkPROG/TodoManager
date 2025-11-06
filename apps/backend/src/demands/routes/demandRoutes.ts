@@ -5,11 +5,16 @@ import { ListDemandsUseCase } from '../usecases/ListDemandsUseCase';
 import { GetDemandUseCase } from '../usecases/GetDemandUseCase';
 import { UpdateDemandUseCase } from '../usecases/UpdateDemandUseCase';
 import { DeleteDemandUseCase } from '../usecases/DeleteDemandUseCase';
+import { CreateDemandItemUseCase } from '../usecases/CreateDemandItemUseCase';
+import { UpdateDemandItemUseCase } from '../usecases/UpdateDemandItemUseCase';
 import { DemandRepository } from '../repositories/DemandRepository';
 import { createDemandValidator } from '../validators/createDemandValidator';
 import { updateDemandValidator } from '../validators/updateDemandValidator';
 import { listDemandsValidator } from '../validators/listDemandsValidator';
 import { getDemandValidator } from '../validators/getDemandValidator';
+import { createDemandItemValidator } from '../validators/createDemandItemValidator';
+import { updateDemandItemValidator } from '../validators/updateDemandItemValidator';
+import { getItemIdValidator } from '../validators/getItemIdValidator';
 import { validationMiddleware } from '../../middlewares/validationMiddleware';
 import { errorHandlerMiddleware } from '../../middlewares/errorHandlerMiddleware';
 import { requestLoggerMiddleware } from '../../middlewares/requestLoggerMiddleware';
@@ -24,7 +29,17 @@ const listDemandsUseCase = new ListDemandsUseCase(demandRepository);
 const getDemandUseCase = new GetDemandUseCase(demandRepository);
 const updateDemandUseCase = new UpdateDemandUseCase(demandRepository);
 const deleteDemandUseCase = new DeleteDemandUseCase(demandRepository);
-const demandController = new DemandController(createDemandUseCase, listDemandsUseCase, getDemandUseCase, updateDemandUseCase, deleteDemandUseCase);
+const createDemandItemUseCase = new CreateDemandItemUseCase(demandRepository);
+const updateDemandItemUseCase = new UpdateDemandItemUseCase(demandRepository);
+const demandController = new DemandController(
+   createDemandUseCase,
+   listDemandsUseCase,
+   getDemandUseCase,
+   updateDemandUseCase,
+   deleteDemandUseCase,
+   createDemandItemUseCase,
+   updateDemandItemUseCase,
+);
 
 router.get(
    '/',
@@ -90,6 +105,37 @@ router.delete(
    async (req: Request, res: Response, next: NextFunction) => {
       try {
          await demandController.delete(req, res);
+      } catch (error) {
+         next(error);
+      }
+   },
+   errorHandlerMiddleware,
+);
+
+router.post(
+   '/:demandId/items',
+   getDemandValidator,
+   createDemandItemValidator,
+   validationMiddleware,
+   async (req: Request, res: Response, next: NextFunction) => {
+      try {
+         await demandController.createItem(req, res);
+      } catch (error) {
+         next(error);
+      }
+   },
+   errorHandlerMiddleware,
+);
+
+router.patch(
+   '/:demandId/items/:itemId',
+   getDemandValidator,
+   getItemIdValidator,
+   updateDemandItemValidator,
+   validationMiddleware,
+   async (req: Request, res: Response, next: NextFunction) => {
+      try {
+         await demandController.updateItem(req, res);
       } catch (error) {
          next(error);
       }

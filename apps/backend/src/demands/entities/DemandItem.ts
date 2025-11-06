@@ -1,7 +1,6 @@
 export class DemandItem {
    constructor(
-      public readonly id: string,
-      public readonly sku: string,
+      public readonly sku: number,
       public readonly description: string,
       public readonly plannedTotalTons: number,
       public readonly producedTotalTons: number | null,
@@ -9,15 +8,13 @@ export class DemandItem {
    ) { }
 
    static fromPrisma(data: {
-      id: string;
-      sku: string;
+      sku: number;
       description: string;
       plannedTotalTons: number;
       producedTotalTons: number | null;
       demandId: string;
    }): DemandItem {
       return new DemandItem(
-         data.id,
          data.sku,
          data.description,
          data.plannedTotalTons,

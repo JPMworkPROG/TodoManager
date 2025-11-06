@@ -8,16 +8,15 @@ datasource db {
 }
 
 model Demand {
-  id            String       @id @default(uuid())
-  title         String
-  description   String
-  status        String       @default("planning")
-  startDate     DateTime
-  endDate       DateTime
-  prodTotalTons Int          @default(0)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  items         DemandItem[]
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  status      String       @default("planning")
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  items       DemandItem[]
 
   @@index([status])
   @@index([startDate])
@@ -25,13 +24,12 @@ model Demand {
 }
 
 model DemandItem {
-  id                String  @id @default(uuid())
-  sku               String  @unique @default(uuid())
+  sku               Int    @id @default(autoincrement())
   description       String
   plannedTotalTons  Float
-  producedTotalTons Float?  @default(0)
+  producedTotalTons Float? @default(0)
   demandId          String
-  demand            Demand  @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  demand            Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
 
   @@index([demandId])
 }

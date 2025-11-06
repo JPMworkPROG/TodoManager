@@ -1,5 +1,6 @@
 import prisma from '../../database/prisma';
 import { Demand } from '../entities/Demand';
+import { DemandItem } from '../entities/DemandItem';
 import { IDemandRepository, FindAllFilters, PaginationOptions, PaginatedResult } from './IDemandRepository';
 
 export class DemandRepository implements IDemandRepository {
@@ -9,7 +10,6 @@ export class DemandRepository implements IDemandRepository {
     status: string;
     startDate: Date;
     endDate: Date;
-    prodTotalTons: number;
     items: Array<{
       description: string;
       plannedTotalTons: number;
@@ -22,7 +22,6 @@ export class DemandRepository implements IDemandRepository {
         status: data.status,
         startDate: data.startDate,
         endDate: data.endDate,
-        prodTotalTons: data.prodTotalTons,
         items: {
           create: data.items.map((item) => ({
             description: item.description,
@@ -133,6 +132,60 @@ export class DemandRepository implements IDemandRepository {
     await prisma.demand.delete({
       where: { id },
     });
+  }
+
+  async createItem(demandId: string, data: {
+    description: string;
+    plannedTotalTons: number;
+    producedTotalTons?: number;
+  }): Promise<DemandItem> {
+    const item = await prisma.demandItem.create({
+      data: {
+        demandId,
+        description: data.description,
+        plannedTotalTons: data.plannedTotalTons,
+        producedTotalTons: data.producedTotalTons ?? 0,
+      },
+    });
+
+    return DemandItem.fromPrisma(item);
+  }
+
+  async findItemBySku(sku: number): Promise<DemandItem | null> {
+    const item = await prisma.demandItem.findUnique({
+      where: { sku },
+    });
+
+    return item ? DemandItem.fromPrisma(item) : null;
+  }
+
+  async updateItem(sku: number, data: {
+    description?: string;
+    plannedTotalTons?: number;
+    producedTotalTons?: number;
+  }): Promise<DemandItem> {
+    const updateData: {
+      description?: string;
+      plannedTotalTons?: number;
+      producedTotalTons?: number;
+    } = {};
+
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+    if (data.plannedTotalTons !== undefined) {
+      updateData.plannedTotalTons = data.plannedTotalTons;
+    }
+    if (data.producedTotalTons !== undefined) {
+      updateData.producedTotalTons = data.producedTotalTons;
+    }
+
+    const item = await prisma.demandItem.update({
+      where: { sku },
+      data: updateData,
+    });
+
+    return DemandItem.fromPrisma(item);
   }
 }
 

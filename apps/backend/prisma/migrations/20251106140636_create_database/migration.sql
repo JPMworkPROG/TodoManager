@@ -6,15 +6,13 @@ CREATE TABLE "Demand" (
     "status" TEXT NOT NULL DEFAULT 'planning',
     "startDate" DATETIME NOT NULL,
     "endDate" DATETIME NOT NULL,
-    "prodTotalTons" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "DemandItem" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "sku" TEXT NOT NULL,
+    "sku" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "description" TEXT NOT NULL,
     "plannedTotalTons" REAL NOT NULL,
     "producedTotalTons" REAL DEFAULT 0,
@@ -30,9 +28,6 @@ CREATE INDEX "Demand_startDate_idx" ON "Demand"("startDate");
 
 -- CreateIndex
 CREATE INDEX "Demand_endDate_idx" ON "Demand"("endDate");
-
--- CreateIndex
-CREATE UNIQUE INDEX "DemandItem_sku_key" ON "DemandItem"("sku");
 
 -- CreateIndex
 CREATE INDEX "DemandItem_demandId_idx" ON "DemandItem"("demandId");
