@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Providers } from "./providers";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import type { Metadata } from 'next'
+import './globals.css'
+import { Providers } from './providers'
+import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: "Todo Manager",
-  description: "Gerenciador de tarefas",
-};
+  title: 'Todo Manager',
+  description: 'Gerenciador de tarefas',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -26,6 +26,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  );
+  )
 }
-

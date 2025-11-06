@@ -7,7 +7,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "db:prepare": "npx prisma generate && npx prisma migrate deploy"
+    "db:prepare": "npx prisma generate && npx prisma migrate deploy",
+    "format": "prettier --write \"src/**/*.{ts,json,yml,yaml}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,json,yml,yaml}\""
   },
   "keywords": [],
   "author": "",
@@ -30,7 +32,11 @@
     "@types/node": "^22.7.5",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yaml": "^1.9.6",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "editorconfig": "^3.0.1",
     "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
     "prisma": "^5.19.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"

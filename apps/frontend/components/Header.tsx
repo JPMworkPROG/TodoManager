@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
-import { useState } from "react"
-import { Sidebar } from "./Sidebar"
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
+import { useState } from 'react'
+import { Sidebar } from './Sidebar'
 
 export function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -40,10 +40,7 @@ export function Header() {
           </div>
         </div>
       </header>
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
     </>
   )
 }

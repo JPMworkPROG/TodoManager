@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRef } from "react";
-import { ThemeProvider } from "next-themes";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useRef } from 'react'
+import { ThemeProvider } from 'next-themes'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const queryClientRef = useRef<QueryClient | null>(null);
+  const queryClientRef = useRef<QueryClient | null>(null)
 
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
@@ -14,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           staleTime: 60 * 1000,
         },
       },
-    });
+    })
   }
 
   return (
@@ -23,6 +23,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
       </ThemeProvider>
     </QueryClientProvider>
-  );
+  )
 }
-

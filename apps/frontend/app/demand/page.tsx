@@ -1,12 +1,9 @@
 'use client'
 
-import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-   Card,
-   CardContent,
-} from "@/components/ui/card"
+import { useState, useEffect } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
    Table,
    TableBody,
@@ -14,84 +11,69 @@ import {
    TableHead,
    TableHeader,
    TableRow,
-} from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+} from '@/components/ui/table'
+import { ChevronLeft, ChevronRight, Eye, Plus } from 'lucide-react'
 import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select"
-import { ChevronLeft, ChevronRight, Eye, Plus } from "lucide-react"
-import { useDemands, type DemandStatus } from "../hooks/useDemands"
-import CreateDemandDialog from "./components/CreateDemandDialog"
-import EditDemandDialog from "./components/EditDemandDialog"
+   useFetchDemands,
+   useFetchDemand,
+   type DemandStatus,
+} from '../hooks/useDemands'
+import { BaseDialog } from '@/components/dialog/BaseDialog'
+import { CreateDemandContent } from './components/dialog/CreateDemandContent'
+import { ViewDemandContent } from './components/dialog/ViewDemandContent'
+import { EditDemandContent } from './components/dialog/EditDemandContent'
+import { DemandPageSkeleton } from './components/DemandPageSkeleton'
+import { DemandDialogSkeleton } from './components/DemandDialogSkeleton'
+import { DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { formatDate } from '@/lib/utils'
+import config from '@/lib/loadEnv'
 
 const statusStyles: Record<DemandStatus, string> = {
-   planning: "bg-[#F6CED8] text-black border-[#8C3F57] dark:bg-[#F6CED8] dark:text-black dark:border-[#8C3F57]",
-   in_progress: "bg-[#CAE1F7] text-black border-[#0D4B80] dark:bg-[#CAE1F7] dark:text-black dark:border-[#0D4B80]",
-   completed: "bg-[#CFEBC7] text-black border-[#1D5A2B] dark:bg-[#CFEBC7] dark:text-black dark:border-[#1D5A2B]",
+   planning:
+      'bg-[#F6CED8] text-black border-[#8C3F57] dark:bg-[#F6CED8] dark:text-black dark:border-[#8C3F57]',
+   in_progress:
+      'bg-[#CAE1F7] text-black border-[#0D4B80] dark:bg-[#CAE1F7] dark:text-black dark:border-[#0D4B80]',
+   completed:
+      'bg-[#CFEBC7] text-black border-[#1D5A2B] dark:bg-[#CFEBC7] dark:text-black dark:border-[#1D5A2B]',
 }
 
 const statusLabels: Record<DemandStatus, string> = {
-   planning: "Planejamento",
-   in_progress: "Em andamento",
-   completed: "Concluído",
+   planning: 'Planejamento',
+   in_progress: 'Em andamento',
+   completed: 'Concluído',
 }
 
-const numberFormatter = new Intl.NumberFormat("pt-BR")
-
-const PAGE_SIZE = 20
+const numberFormatter = new Intl.NumberFormat('pt-BR')
 
 export default function DemandPage() {
    const [currentPage, setCurrentPage] = useState(1)
-   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-   const [editedDemandId, setEditedDemandId] = useState<string | null>(null)
-   const { data, isLoading, error } = useDemands(currentPage, PAGE_SIZE)
+   const [showCreateDialog, setShowCreateDialog] = useState(false)
+   const [selectedDemandId, setSelectedDemandId] = useState<string | null>(null)
+   const [editMode, setEditMode] = useState(false)
 
-   const handleEditClick = (demandId: string) => {
-      setEditedDemandId(demandId)
-   }
+   const PAGE_SIZE = config.PAGE_SIZE
+   const {
+      data: demandList,
+      isLoading,
+      error,
+   } = useFetchDemands(currentPage, PAGE_SIZE)
+   const { data: selectedDemand, isLoading: loadingDemand } =
+      useFetchDemand(selectedDemandId)
 
-   const handleCloseEditDialog = () => {
-      setEditedDemandId(null)
-   }
+   useEffect(() => {
+      if (!selectedDemandId) setEditMode(false)
+   }, [selectedDemandId])
 
-   const demandsData = data?.data || []
-   const paginationMeta = data?.meta || {
+   const demandsData = demandList?.data || []
+   const paginationMeta = demandList?.meta || {
       page: 1,
       pageSize: PAGE_SIZE,
       totalItems: 0,
       totalPages: 0,
    }
 
-   const handlePreviousPage = () => {
-      if (currentPage > 1) {
-         setCurrentPage(prev => prev - 1)
-         window.scrollTo({ top: 0, behavior: 'smooth' })
-      }
-   }
-
-   const handleNextPage = () => {
-      if (paginationMeta && currentPage < paginationMeta.totalPages) {
-         setCurrentPage(prev => prev + 1)
-         window.scrollTo({ top: 0, behavior: 'smooth' })
-      }
-   }
-
    if (isLoading) {
-      return (
-         <section className="pb-12 pt-10">
-            <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6">
-               <div className="text-center py-12">
-                  <p className="text-foreground">Carregando demandas...</p>
-               </div>
-            </div>
-         </section>
-      )
+      return <DemandPageSkeleton />
    }
 
    if (error) {
@@ -99,14 +81,16 @@ export default function DemandPage() {
          <section className="pb-12 pt-10">
             <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6">
                <div className="text-center py-12">
-                  <p className="text-red-500">Erro ao carregar demandas: {error instanceof Error ? error.message : 'Erro desconhecido'}</p>
+                  <p className="text-red-500">
+                     Erro ao carregar demandas:{' '}
+                     {error instanceof Error ? error.message : 'Erro desconhecido'}
+                  </p>
                </div>
             </div>
          </section>
       )
    }
 
-   const newLocal = "bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200"
    return (
       <section className="pb-12 pt-10">
          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6">
@@ -117,14 +101,9 @@ export default function DemandPage() {
             </div>
 
             <div className="flex items-center justify-between">
-               <Button
-                  type="button"
-                  size="default"
-                  className="h-10 px-5 text-xs font-semibold uppercase tracking-[0.3em]"
-                  onClick={() => setIsCreateDialogOpen(true)}
-               >
-                  <Plus className="h-4 w-4" />
-                  Adicionar
+               <Button onClick={() => setShowCreateDialog(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Demanda
                </Button>
                <div className="h-px flex-1 translate-y-[13px] bg-transparent" />
             </div>
@@ -159,35 +138,43 @@ export default function DemandPage() {
                      </TableHeader>
                      <TableBody>
                         {demandsData.map((demand) => (
-                           <TableRow
-                              key={demand.id}
-                              className={newLocal}
-                           >
+                           <TableRow key={demand.id} className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200">
                               <TableCell className="px-6 py-4">
                                  <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-9 w-9 text-primary hover:bg-primary/10 transition-colors duration-200"
-                                    aria-label={`Visualizar demanda ${demand.title}`}
-                                    onClick={() => handleEditClick(demand.id)}
+                                    onClick={() => setSelectedDemandId(demand.id)}
                                  >
                                     <Eye className="h-4 w-4" />
                                  </Button>
                               </TableCell>
                               <TableCell className="px-6 py-4 text-base text-table-text">
-                                 {demand.title}
+                                 <div className="max-w-30 truncate" title={demand.title}>
+                                    {demand.title}
+                                 </div>
                               </TableCell>
-                              <TableCell className="px-6 py-4 text-base text-table-text">
-                                 {demand.startDate} - {demand.endDate}
+                              <TableCell className="px-6 py-4 text-base text-table-text whitespace-nowrap">
+                                 {formatDate(demand.startDate)} -{' '}
+                                 {formatDate(demand.endDate)}
                               </TableCell>
                               <TableCell className="px-6 py-4 text-base font-semibold text-table-text">
                                  {demand.items.length}
                               </TableCell>
                               <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
-                                 {numberFormatter.format(demand.items.reduce((acc, item) => acc + item.plannedTotalTons, 0))}
+                                 {numberFormatter.format(
+                                    demand.items.reduce(
+                                       (acc, item) => acc + item.plannedTotalTons,
+                                       0,
+                                    ),
+                                 )}
                               </TableCell>
                               <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
-                                 {numberFormatter.format(demand.items.reduce((acc, item) => acc + (item.producedTotalTons ?? 0), 0))}
+                                 {numberFormatter.format(
+                                    demand.items.reduce(
+                                       (acc, item) => acc + (item.producedTotalTons ?? 0),
+                                       0,
+                                    ),
+                                 )}
                               </TableCell>
                               <TableCell className="px-6 py-4 text-right">
                                  <Badge
@@ -198,64 +185,104 @@ export default function DemandPage() {
                               </TableCell>
                            </TableRow>
                         ))}
-                        {Array.from({ length: Math.max(0, 5 - demandsData.length) }).map(
-                           (_, index) => (
-                              <TableRow
-                                 key={`placeholder-${index}`}
-                                 className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200"
-                              >
-                                 <TableCell className="px-6 py-6">&nbsp;</TableCell>
-                                 <TableCell className="px-6 py-6" />
-                                 <TableCell className="px-6 py-6" />
-                                 <TableCell className="px-6 py-6" />
-                                 <TableCell className="px-6 py-6" />
-                                 <TableCell className="px-6 py-6" />
-                                 <TableCell className="px-6 py-6" />
-                              </TableRow>
-                           )
-                        )}
+                        {Array.from({
+                           length: Math.max(0, 5 - demandsData.length),
+                        }).map((_, index) => (
+                           <TableRow
+                              key={`placeholder-${index}`}
+                              className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200"
+                           >
+                              <TableCell className="px-6 py-6">&nbsp;</TableCell>
+                              <TableCell className="px-6 py-6" />
+                              <TableCell className="px-6 py-6" />
+                              <TableCell className="px-6 py-6" />
+                              <TableCell className="px-6 py-6" />
+                              <TableCell className="px-6 py-6" />
+                              <TableCell className="px-6 py-6" />
+                           </TableRow>
+                        ))}
                      </TableBody>
                   </Table>
                </CardContent>
                <div className="flex items-center justify-between border-t border-border px-6 py-4">
                   <div className="text-sm text-muted-foreground">
-                     Mostrando {((currentPage - 1) * PAGE_SIZE) + 1} a {Math.min(currentPage * PAGE_SIZE, paginationMeta.totalItems)} de {numberFormatter.format(paginationMeta.totalItems)} demandas
+                     Mostrando {(currentPage - 1) * PAGE_SIZE + 1} a{' '}
+                     {Math.min(currentPage * PAGE_SIZE, paginationMeta.totalItems)} de{' '}
+                     {numberFormatter.format(paginationMeta.totalItems)} demandas
                   </div>
                   <div className="flex items-center gap-2">
                      <Button
                         variant="outline"
                         size="sm"
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1 || isLoading}
-                        className="h-9 px-3"
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        disabled={currentPage === 1}
                      >
                         <ChevronLeft className="h-4 w-4" />
-                        <span className="sr-only">Página anterior</span>
                      </Button>
-                     <div className="flex items-center gap-1 text-sm text-foreground">
-                        <span className="px-3 py-1.5">
-                           Página {currentPage} de {paginationMeta.totalPages}
-                        </span>
-                     </div>
+                     <span className="text-sm">
+                        Página {currentPage} de {paginationMeta.totalPages}
+                     </span>
                      <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleNextPage}
-                        disabled={currentPage >= paginationMeta.totalPages || isLoading}
-                        className="h-9 px-3"
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        disabled={currentPage >= paginationMeta.totalPages}
                      >
-                        <span className="sr-only">Próxima página</span>
                         <ChevronRight className="h-4 w-4" />
                      </Button>
                   </div>
                </div>
             </Card>
 
-            <CreateDemandDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} onCreated={() => setCurrentPage(1)} />
+            <BaseDialog
+               open={showCreateDialog}
+               onOpenChange={setShowCreateDialog}
+               maxWidth="2xl"
+            >
+               <CreateDemandContent
+                  onClose={() => setShowCreateDialog(false)}
+                  onCreated={() => setCurrentPage(1)}
+               />
+            </BaseDialog>
 
-            <EditDemandDialog demandId={editedDemandId} onClose={handleCloseEditDialog} />
+            <BaseDialog
+               open={!!selectedDemandId}
+               onOpenChange={(open) => !open && setSelectedDemandId(null)}
+               maxWidth="5xl"
+            >
+               {loadingDemand ? (
+                  <DemandDialogSkeleton />
+               ) : selectedDemand ? (
+                  editMode ? (
+                     <EditDemandContent
+                        demand={selectedDemand}
+                        onCancel={() => setEditMode(false)}
+                        onSuccess={() => setEditMode(false)}
+                     />
+                  ) : (
+                     <ViewDemandContent
+                        demand={selectedDemand}
+                        onClose={() => setSelectedDemandId(null)}
+                        onEditMode={() => setEditMode(true)}
+                     />
+                  )
+               ) : (
+                  <>
+                     <DialogHeader>
+                        <DialogTitle>Erro</DialogTitle>
+                     </DialogHeader>
+                     <div className="py-12 text-center">
+                        <p className="text-muted-foreground mb-4">
+                           Erro ao carregar demanda.
+                        </p>
+                        <Button onClick={() => setSelectedDemandId(null)}>
+                           Fechar
+                        </Button>
+                     </div>
+                  </>
+               )}
+            </BaseDialog>
          </div>
       </section>
    )
 }
-
