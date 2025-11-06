@@ -112,7 +112,7 @@ export function createLogger(config?: LoggerConfig): Logger {
 
 export const logger = createLogger({
   level: (env.LOG_LEVEL as LogLevel) || "info",
-  service: env.SERVICE_NAME || "core-tasks",
+  service: env.SERVICE_NAME || "todoManagerBackend",
   environment: env.NODE_ENV || "development",
 });
 
