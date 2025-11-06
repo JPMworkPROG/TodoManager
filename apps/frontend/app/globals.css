@@ -8,84 +8,123 @@
   /* Tema claro: #F05123, #F89C4D, #FCBD73, #F7D2A3 */
   --color-primary: #F05123;
   --color-primary-foreground: oklch(98% 0 0);
-  
+
   --color-accent: #F89C4D;
   --color-accent-foreground: oklch(9% 0 0);
-  
+
   --color-secondary: #FCBD73;
   --color-secondary-foreground: oklch(9% 0 0);
-  
+
   --color-muted: #F7D2A3;
   --color-muted-foreground: oklch(45.1% 0 0);
-  
-  --color-background: oklch(100% 0 0);
+
+  --color-background: #F4F4F4;
   --color-foreground: oklch(3.9% 0 0);
-  
+
   --color-card: oklch(100% 0 0);
   --color-card-foreground: oklch(3.9% 0 0);
-  
+
   --color-popover: oklch(100% 0 0);
   --color-popover-foreground: oklch(3.9% 0 0);
-  
+
   --color-destructive: oklch(60.2% 0.842 0);
   --color-destructive-foreground: oklch(98% 0 0);
-  
+
   --color-border: oklch(89.8% 0 0);
   --color-input: oklch(89.8% 0 0);
   --color-ring: #F05123;
-  
+
   --color-chart-1: #F05123;
   --color-chart-2: #F89C4D;
   --color-chart-3: #FCBD73;
   --color-chart-4: #F7D2A3;
   --color-chart-5: oklch(67% 0.87 27);
-  
+
+  /* Cores específicas para UI */
+  --color-header-bg: #313131;
+  --color-header-text: #FFFFFF;
+  --color-footer-bg: #313131;
+  --color-footer-text: rgba(255, 255, 255, 0.7);
+  --color-table-header-bg: #F0F0F0;
+  --color-table-header-text: #525252;
+  --color-table-row-bg: #FFFFFF;
+  --color-table-row-hover: #F9FAFB;
+  --color-table-text: #374151;
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-border: #E5E7EB;
+  --color-sidebar-text: #111827;
+  --color-sidebar-hover: #F3F4F6;
+
   --radius: 0.5rem;
+
+  /* Transições suaves */
+  --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .dark {
   /* Tema escuro: #232120, #2D2D2C, #6E6F72, #868586, #F1F3F4 */
-  --color-background: #232120;
+  --color-background: #1A1A1A;
   --color-foreground: #F1F3F4;
-  
+
   --color-card: #2D2D2C;
   --color-card-foreground: #F1F3F4;
-  
+
   --color-popover: #2D2D2C;
   --color-popover-foreground: #F1F3F4;
-  
-  --color-primary: #F1F3F4;
-  --color-primary-foreground: #232120;
-  
-  --color-secondary: #2D2D2C;
+
+  --color-primary: #F89C4D;
+  --color-primary-foreground: #1A1A1A;
+
+  --color-secondary: #3A3A3A;
   --color-secondary-foreground: #F1F3F4;
-  
+
   --color-muted: #6E6F72;
   --color-muted-foreground: #F1F3F4;
-  
-  --color-accent: #2D2D2C;
+
+  --color-accent: #3A3A3A;
   --color-accent-foreground: #F1F3F4;
-  
+
   --color-destructive: oklch(30.6% 0.628 0);
   --color-destructive-foreground: #F1F3F4;
-  
-  --color-border: #868586;
-  --color-input: #868586;
-  --color-ring: #868586;
-  
-  --color-chart-1: #F1F3F4;
+
+  --color-border: #404040;
+  --color-input: #404040;
+  --color-ring: #F89C4D;
+
+  --color-chart-1: #F89C4D;
   --color-chart-2: #868586;
   --color-chart-3: #6E6F72;
-  --color-chart-4: #2D2D2C;
-  --color-chart-5: #232120;
+  --color-chart-4: #3A3A3A;
+  --color-chart-5: #2D2D2C;
+
+  /* Cores específicas para UI - tema escuro */
+  --color-header-bg: #1F1F1F;
+  --color-header-text: #FFFFFF;
+  --color-footer-bg: #1F1F1F;
+  --color-footer-text: rgba(255, 255, 255, 0.7);
+  --color-table-header-bg: #2D2D2C;
+  --color-table-header-text: #D1D5DB;
+  --color-table-row-bg: #2D2D2C;
+  --color-table-row-hover: #3A3A3A;
+  --color-table-text: #E5E7EB;
+  --color-sidebar-bg: #2D2D2C;
+  --color-sidebar-border: #404040;
+  --color-sidebar-text: #F1F3F4;
+  --color-sidebar-hover: #3A3A3A;
 }
 
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
-  
+
+  html {
+    color-scheme: light dark;
+  }
+
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
