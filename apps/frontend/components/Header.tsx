@@ -25,10 +25,10 @@ export function Header() {
           </Button>
           <div className="flex flex-col leading-none">
             <span className="text-2xl font-semibold uppercase tracking-[0.35em]">
-              SMI
+              LLC
             </span>
             <span className="text-xs uppercase tracking-[0.5em] text-white/70">
-              Engineering
+              Latinhas
             </span>
           </div>
           <div className="ml-auto">
