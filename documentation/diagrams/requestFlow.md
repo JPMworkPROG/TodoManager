@@ -295,12 +295,6 @@ flowchart TD
     Success --> Response
     
     Response --> Client[Cliente Frontend]
-
-    style ValidationError fill:#ff6b6b,stroke:#333,stroke-width:2px
-    style BusinessError fill:#ffa07a,stroke:#333,stroke-width:2px
-    style DBError fill:#ff4444,stroke:#333,stroke-width:2px
-    style Success fill:#90ee90,stroke:#333,stroke-width:2px
-    style ErrorHandler fill:#ffcc00,stroke:#333,stroke-width:2px
 ```
 
 ## Fluxo de Cache do React Query
@@ -335,10 +329,5 @@ flowchart TD
     
     Invalidate --> Refetch[Refetch automático]
     Refetch --> UpdateCache
-    
-    style ReturnCache fill:#90ee90,stroke:#333,stroke-width:2px
-    style UpdateCache fill:#61dafb,stroke:#333,stroke-width:2px
-    style Invalidate fill:#ffa07a,stroke:#333,stroke-width:2px
-    style ErrorState fill:#ff6b6b,stroke:#333,stroke-width:2px
 ```
 

@@ -51,10 +51,6 @@ graph TB
     Routes --> Health
     Docker -.-> Routes
     Docker -.-> Pages
-
-    style UI fill:#61dafb,stroke:#333,stroke-width:2px
-    style SQLite fill:#003b57,stroke:#333,stroke-width:2px
-    style Docker fill:#2496ed,stroke:#333,stroke-width:2px
 ```
 
 ## Arquitetura em Camadas - Backend
@@ -82,11 +78,6 @@ graph LR
         REP --> PRISMA[Prisma Client]
         PRISMA --> DB[(SQLite)]
     end
-
-    style R fill:#90ee90,stroke:#333,stroke-width:2px
-    style UC fill:#ffa07a,stroke:#333,stroke-width:2px
-    style E fill:#ffb6c1,stroke:#333,stroke-width:2px
-    style DB fill:#905b77,stroke:#333,stroke-width:2px
 ```
 
 ## Stack Tecnológica Completa
@@ -125,9 +116,4 @@ graph TD
     Docker --> Node
     Docker --> Next
     Compose --> Docker
-
-    style React fill:#61dafb,stroke:#333,stroke-width:2px
-    style Express fill:#90ee90,stroke:#333,stroke-width:2px
-    style SQLite fill:#003b57,stroke:#333,stroke-width:2px
-    style Docker fill:#2496ed,stroke:#333,stroke-width:2px
 ```
