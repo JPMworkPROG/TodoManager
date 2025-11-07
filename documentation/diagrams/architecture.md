@@ -53,33 +53,6 @@ graph TB
     Docker -.-> Pages
 ```
 
-## Arquitetura em Camadas - Backend
-
-```mermaid
-graph LR
-    subgraph "Presentation Layer"
-        R[Routes] --> MW[Middlewares]
-        MW --> C[Controllers]
-    end
-
-    subgraph "Application Layer"
-        C --> UC[Use Cases]
-        UC --> V[Validators]
-        UC --> DTO[DTOs]
-        UC --> ER[Errors]
-    end
-
-    subgraph "Domain Layer"
-        UC --> E[Entities]
-    end
-
-    subgraph "Infrastructure Layer"
-        UC --> REP[Repositories]
-        REP --> PRISMA[Prisma Client]
-        PRISMA --> DB[(SQLite)]
-    end
-```
-
 ## Estados da Demanda
 
 ```mermaid
