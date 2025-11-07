@@ -25,31 +25,3 @@ erDiagram
         string demandId FK "NOT NULL, ON DELETE CASCADE"
     }
 ```
-## Estados da Demanda
-
-```mermaid
-stateDiagram-v2
-    [*] --> Planning: Criar Demanda
-    
-    Planning --> InProgress: Iniciar Produção
-    
-    InProgress --> Completed: Finalizar Produção
-    InProgress --> Planning: Retornar ao Planejamento
-    
-    Completed --> [*]
-
-    note right of Planning
-        Status: planning
-        Planejando como atender a demanda
-    end note
-
-    note right of InProgress
-        Status: in_progress
-        Produção em andamento
-    end note
-
-    note right of Completed
-        Status: completed
-        Demanda finalizada
-    end note
-```
