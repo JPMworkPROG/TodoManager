@@ -1,4 +1,4 @@
-# TodoManager — Desenvolvedor Full Stack Pleno
+# TodoManager — Planejamento de Demandas
 
 Este projeto implementa o sistema de **Planejamento de Demandas** da empresa fictícia **Latinhas LLC**, conforme o desafio técnico proposto.  
 O objetivo é demonstrar habilidades de **desenvolvimento full stack**, englobando **API (backend)**, **interface web (front-end)**, **integração**, **dockerização** e **boas práticas de engenharia de software**.
