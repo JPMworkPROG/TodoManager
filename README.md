@@ -14,8 +14,8 @@ Desenvolver uma aplicação completa (API + Front-End) que permita o **gerenciam
 ## 🧱 Tecnologias Utilizadas
 
 ### **Front-End**
-- [ReactJS 18](https://react.dev)
-- [NextJS 14](https://nextjs.org)
+- **ReactJS 18**
+- **NextJS 14**
 - **React Hook Form** - Gerenciamento de formulários
 - **TanStack Query** - Gerenciamento de estado assíncrono e cache
 - Framework CSS: **TailwindCSS 4** 
