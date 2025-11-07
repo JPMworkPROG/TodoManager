@@ -139,7 +139,6 @@ Acessos:
 ## 📝 Diagramas
 
 Para visualizar os diagramas de fluxo de dados e requisições, consulte:
-- [Diagrama de Fluxo de Requisições](./documentation/diagrams/requestFlow.md)
 - [Diagrama de Arquitetura](./documentation/diagrams/architecture.md)
 - [Diagrama de Entidades](./documentation/diagrams/entities.md)
 
