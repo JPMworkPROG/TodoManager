@@ -31,7 +31,6 @@ graph TB
 
     subgraph "Infraestrutura"
         Docker[Docker Container]
-        Health[Health Check]
     end
 
     UI --> Pages
@@ -48,7 +47,6 @@ graph TB
     Repositories --> Prisma
     Prisma -->|SQL| SQLite
     
-    Routes --> Health
     Docker -.-> Routes
     Docker -.-> Pages
 ```
@@ -111,7 +109,6 @@ graph TD
     subgraph "DevOps"
         Docker[Docker Multi-stage]
         Compose[Docker Compose]
-        HC[Health Check]
     end
 
     Next -.->|HTTP REST| Express
