@@ -8,7 +8,7 @@ graph TB
         UI[Interface React/Next.js]
     end
 
-    subgraph "Frontend - Next.js 15"
+    subgraph "Frontend - Next.js 14"
         Pages[Pages/Routes]
         Components[Components UI]
         Hooks[Custom Hooks]
@@ -85,7 +85,7 @@ stateDiagram-v2
 ```mermaid
 graph TD
     subgraph "Frontend Stack"
-        React[React 18] --> Next[Next.js 15]
+        React[React 18] --> Next[Next.js 14]
         Next --> RHF[React Hook Form]
         Next --> RQ[React Query]
         Next --> TW[TailwindCSS 4]
