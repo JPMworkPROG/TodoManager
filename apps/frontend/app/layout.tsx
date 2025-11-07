@@ -7,6 +7,9 @@ import { Footer } from '@/components/Footer'
 export const metadata: Metadata = {
   title: 'Todo Manager',
   description: 'Gerenciador de tarefas',
+  icons: {
+    icon: '/icon.svg',
+  },
 }
 
 export default function RootLayout({
