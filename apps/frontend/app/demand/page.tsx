@@ -25,6 +25,12 @@ import { EditDemandContent } from './components/dialog/EditDemandContent'
 import { DemandPageSkeleton } from './components/DemandPageSkeleton'
 import { DemandDialogSkeleton } from './components/DemandDialogSkeleton'
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+   Tooltip,
+   TooltipContent,
+   TooltipProvider,
+   TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { formatDate } from '@/lib/utils'
 import config from '@/lib/loadEnv'
 
@@ -110,99 +116,150 @@ export default function DemandPage() {
 
             <Card className="overflow-hidden border-0 shadow-md ring-1 ring-black/5 dark:ring-white/10 transition-all duration-300">
                <CardContent className="p-0">
-                  <Table>
-                     <TableHeader className="bg-table-header-bg dark:bg-table-header-bg uppercase tracking-wide text-table-header-text transition-colors duration-300">
-                        <TableRow className="hover:bg-table-header-bg">
-                           <TableHead className="w-24 px-6 py-3 text-xs font-semibold text-table-header-text">
-                              Visualizar
-                           </TableHead>
-                           <TableHead className="px-6 py-3 text-xs font-semibold text-table-header-text">
-                              Título
-                           </TableHead>
-                           <TableHead className="px-6 py-3 text-xs font-semibold text-table-header-text">
-                              Período
-                           </TableHead>
-                           <TableHead className="w-24 px-6 py-3 text-xs font-semibold text-table-header-text">
-                              SKUs
-                           </TableHead>
-                           <TableHead className="w-40 px-6 py-3 text-right text-xs font-semibold text-table-header-text whitespace-nowrap">
-                              Total Plan (tons)
-                           </TableHead>
-                           <TableHead className="w-44 px-6 py-3 text-right text-xs font-semibold text-table-header-text whitespace-nowrap">
-                              Total Prod. (tons)
-                           </TableHead>
-                           <TableHead className="w-36 px-6 py-3 text-right text-xs font-semibold text-table-header-text">
-                              Status
-                           </TableHead>
-                        </TableRow>
-                     </TableHeader>
-                     <TableBody>
-                        {demandsData.map((demand) => (
-                           <TableRow key={demand.id} className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200">
-                              <TableCell className="px-6 py-4">
-                                 <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setSelectedDemandId(demand.id)}
-                                 >
-                                    <Eye className="h-4 w-4" />
-                                 </Button>
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-base text-table-text">
-                                 <div className="max-w-30 truncate" title={demand.title}>
-                                    {demand.title}
-                                 </div>
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-base text-table-text whitespace-nowrap">
-                                 {formatDate(demand.startDate)} -{' '}
-                                 {formatDate(demand.endDate)}
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-base font-semibold text-table-text">
-                                 {demand.items.length}
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
-                                 {numberFormatter.format(
-                                    demand.items.reduce(
-                                       (acc, item) => acc + item.plannedTotalTons,
-                                       0,
-                                    ),
-                                 )}
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
-                                 {numberFormatter.format(
-                                    demand.items.reduce(
-                                       (acc, item) => acc + (item.producedTotalTons ?? 0),
-                                       0,
-                                    ),
-                                 )}
-                              </TableCell>
-                              <TableCell className="px-6 py-4 text-right">
-                                 <Badge
-                                    className={`rounded-md px-3 py-1 text-[0.7rem] font-semibold whitespace-nowrap transition-all duration-200 border ${statusStyles[demand.status]}`}
-                                 >
-                                    {statusLabels[demand.status]}
-                                 </Badge>
-                              </TableCell>
+                  <TooltipProvider>
+                     <Table>
+                        <TableHeader className="bg-table-header-bg dark:bg-table-header-bg uppercase tracking-wide text-table-header-text transition-colors duration-300">
+                           <TableRow className="hover:bg-table-header-bg">
+                              <TableHead className="w-24 px-6 py-3 text-xs font-semibold text-table-header-text">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Visualizar</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Visualizar detalhes da demanda</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="px-6 py-3 text-xs font-semibold text-table-header-text">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Título</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Nome ou identificação da demanda</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="px-6 py-3 text-xs font-semibold text-table-header-text">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Período</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Data de início e fim da demanda</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="w-24 px-6 py-3 text-xs font-semibold text-table-header-text">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">SKUs</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Quantidade de itens (SKUs) na demanda</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="w-40 px-6 py-3 text-right text-xs font-semibold text-table-header-text whitespace-nowrap">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Total Plan (tons)</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Total planejado em toneladas</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="w-44 px-6 py-3 text-right text-xs font-semibold text-table-header-text whitespace-nowrap">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Total Prod. (tons)</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Total produzido em toneladas</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
+                              <TableHead className="w-36 px-6 py-3 text-right text-xs font-semibold text-table-header-text">
+                                 <Tooltip>
+                                    <TooltipTrigger asChild>
+                                       <span className="cursor-help">Status</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                       <p>Status atual da demanda (Planejamento, Em andamento ou Concluído)</p>
+                                    </TooltipContent>
+                                 </Tooltip>
+                              </TableHead>
                            </TableRow>
-                        ))}
-                        {Array.from({
-                           length: Math.max(0, 5 - demandsData.length),
-                        }).map((_, index) => (
-                           <TableRow
-                              key={`placeholder-${index}`}
-                              className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200"
-                           >
-                              <TableCell className="px-6 py-6">&nbsp;</TableCell>
-                              <TableCell className="px-6 py-6" />
-                              <TableCell className="px-6 py-6" />
-                              <TableCell className="px-6 py-6" />
-                              <TableCell className="px-6 py-6" />
-                              <TableCell className="px-6 py-6" />
-                              <TableCell className="px-6 py-6" />
-                           </TableRow>
-                        ))}
-                     </TableBody>
-                  </Table>
+                        </TableHeader>
+                        <TableBody>
+                           {demandsData.map((demand) => (
+                              <TableRow key={demand.id} className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200">
+                                 <TableCell className="px-6 py-4">
+                                    <Button
+                                       variant="ghost"
+                                       size="icon"
+                                       onClick={() => setSelectedDemandId(demand.id)}
+                                    >
+                                       <Eye className="h-4 w-4" />
+                                    </Button>
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-base text-table-text">
+                                    <div className="max-w-30 truncate" title={demand.title}>
+                                       {demand.title}
+                                    </div>
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-base text-table-text whitespace-nowrap">
+                                    {formatDate(demand.startDate)} -{' '}
+                                    {formatDate(demand.endDate)}
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-base font-semibold text-table-text">
+                                    {demand.items.length}
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
+                                    {numberFormatter.format(
+                                       demand.items.reduce(
+                                          (acc, item) => acc + item.plannedTotalTons,
+                                          0,
+                                       ),
+                                    )}
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-right text-base font-semibold text-table-text">
+                                    {numberFormatter.format(
+                                       demand.items.reduce(
+                                          (acc, item) => acc + (item.producedTotalTons ?? 0),
+                                          0,
+                                       ),
+                                    )}
+                                 </TableCell>
+                                 <TableCell className="px-6 py-4 text-right">
+                                    <Badge
+                                       className={`rounded-md px-3 py-1 text-[0.7rem] font-semibold whitespace-nowrap transition-all duration-200 border ${statusStyles[demand.status]}`}
+                                    >
+                                       {statusLabels[demand.status]}
+                                    </Badge>
+                                 </TableCell>
+                              </TableRow>
+                           ))}
+                           {Array.from({
+                              length: Math.max(0, 5 - demandsData.length),
+                           }).map((_, index) => (
+                              <TableRow
+                                 key={`placeholder-${index}`}
+                                 className="bg-(--color-table-row-bg) hover:bg-table-row-hover transition-colors duration-200"
+                              >
+                                 <TableCell className="px-6 py-6">&nbsp;</TableCell>
+                                 <TableCell className="px-6 py-6" />
+                                 <TableCell className="px-6 py-6" />
+                                 <TableCell className="px-6 py-6" />
+                                 <TableCell className="px-6 py-6" />
+                                 <TableCell className="px-6 py-6" />
+                                 <TableCell className="px-6 py-6" />
+                              </TableRow>
+                           ))}
+                        </TableBody>
+                     </Table>
+                  </TooltipProvider>
                </CardContent>
                <div className="flex items-center justify-between border-t border-border px-6 py-4">
                   <div className="text-sm text-muted-foreground">
