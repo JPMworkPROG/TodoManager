@@ -1,5 +1,6 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
+LABEL name="todomanager-backend"
 
 # Install OpenSSL required by Prisma
 RUN apk add --no-cache openssl
